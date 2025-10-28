@@ -5,7 +5,7 @@
 ## 安装
 
 ```bash
-go get github.com/hiyunlai/yunlai-open-sdk
+go get github.com/hiyunlai/yunlai-open-go-sdk
 ```
 
 ## 快速开始
@@ -17,7 +17,7 @@ import (
     "context"
     "log"
     
-    yunlai "github.com/hiyunlai/yunlai-open-sdk"
+    yunlai "github.com/hiyunlai/yunlai-open-go-sdk"
 )
 
 func main() {
@@ -41,6 +41,31 @@ func main() {
 ## 业务模块
 
 SDK 按业务领域划分为三大模块：
+
+### Match - 竞彩投注
+
+获取竞彩足球、竞彩篮球、北京单场等投注信息。
+
+```go
+// 获取竞彩足球投注列表
+betList, _ := client.GetMatchBetList(ctx, "227", "5")
+
+// 获取传统足彩投注信息
+betInfo, _ := client.GetCtzcBetInfo(ctx, "172", "25001")
+```
+
+<details>
+<summary>查看全部接口</summary>
+
+- `GetMatchBetList` - 赛事投注列表（北单、竞足、竞篮）
+- `GetMatchBetInfo` - 赛事投注信息（北单、竞足、竞篮）
+- `GetCtzcBetList` - 传统足彩投注列表
+- `GetCtzcBetInfo` - 传统足彩投注信息
+- `GetDigitalBetList` - 数字彩投注列表
+- `GetDigitalBetInfo` - 数字彩投注信息
+- `GetGyjBetInfo` - 冠亚军投注信息
+
+</details>
 
 ### Live - 比分直播
 
@@ -77,31 +102,6 @@ lineup, _ := client.GetLiveMatchLineup(ctx, matchID)
 
 </details>
 
-### Match - 竞彩投注
-
-获取竞彩足球、竞彩篮球、北京单场等投注信息。
-
-```go
-// 获取竞彩足球投注列表
-betList, _ := client.GetMatchBetList(ctx, "227", "spf")
-
-// 获取传统足彩投注信息
-betInfo, _ := client.GetCtzcBetInfo(ctx, "229", "24001")
-```
-
-<details>
-<summary>查看全部接口</summary>
-
-- `GetMatchBetList` - 赛事投注列表（北单、竞足、竞篮）
-- `GetMatchBetInfo` - 赛事投注信息（北单、竞足、竞篮）
-- `GetCtzcBetList` - 传统足彩投注列表
-- `GetCtzcBetInfo` - 传统足彩投注信息
-- `GetDigitalBetList` - 数字彩投注列表
-- `GetDigitalBetInfo` - 数字彩投注信息
-- `GetGyjBetInfo` - 冠亚军投注信息
-
-</details>
-
 ### Draw - 开奖信息
 
 获取数字彩、传统足彩等开奖历史和详情。
@@ -111,7 +111,7 @@ betInfo, _ := client.GetCtzcBetInfo(ctx, "229", "24001")
 drawList, _ := client.GetLotteryDrawHomeList(ctx)
 
 // 获取数字彩彩果详情
-resultInfo, _ := client.GetDigitalResultInfo(ctx, "239", "24001")
+resultInfo, _ := client.GetDigitalResultInfo(ctx, "188", "25001")
 ```
 
 <details>
