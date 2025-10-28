@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
+	"net/url"
 	"time"
-
-	"github.com/go-resty/resty/v2"
 )
 
 // ============================================================================
@@ -19,8 +20,6 @@ const (
 	DefaultBaseURL = "https://api.58st.cn"
 	// DefaultTimeout 默认的请求超时时间
 	DefaultTimeout = 30 * time.Second
-	// DefaultRetry 默认的重试次数
-	DefaultRetry = 3
 )
 
 // 业务错误码常量
@@ -64,8 +63,6 @@ type Config struct {
 	BaseURL string
 	// Timeout 请求超时时间
 	Timeout time.Duration
-	// Retry 重试次数
-	Retry int
 	// Logger 日志记录器
 	Logger Logger
 }
@@ -78,8 +75,9 @@ type DefaultLogger struct{}
 
 // Client 云来开放平台客户端
 type Client struct {
-	config      *Config
-	restyClient *resty.Client
+	config     *Config
+	httpClient *http.Client
+	baseURL    string
 }
 
 // ============================================================================
@@ -157,12 +155,6 @@ func WithLogger(logger Logger) Option {
 	}
 }
 
-// WithRetry 设置重试次数
-func WithRetry(retry int) Option {
-	return func(c *Config) {
-		c.Retry = retry
-	}
-}
 
 // WithTimeout 设置请求超时时间
 func WithTimeout(timeout time.Duration) Option {
@@ -180,7 +172,6 @@ func NewClient(opts ...Option) *Client {
 	config := &Config{
 		BaseURL: DefaultBaseURL,
 		Timeout: DefaultTimeout,
-		Retry:   DefaultRetry,
 	}
 
 	// 应用配置选项
@@ -193,35 +184,15 @@ func NewClient(opts ...Option) *Client {
 		panic("api key is required")
 	}
 
-	// 创建resty客户端
-	restyClient := resty.New()
-	restyClient.SetBaseURL(config.BaseURL)
-	restyClient.SetTimeout(config.Timeout)
-	restyClient.SetRetryCount(config.Retry)
-
-	// 设置Bearer Token
-	restyClient.SetAuthToken(config.ApiKey)
-
-	// 设置默认请求头
-	restyClient.SetHeader("Content-Type", "application/json")
-	restyClient.SetHeader("User-Agent", "yunlai-go-sdk/1.0.0")
-
-	// 如果有日志记录器，设置调试模式
-	if config.Logger != nil {
-		restyClient.SetDebug(true)
-		restyClient.OnBeforeRequest(func(c *resty.Client, req *resty.Request) error {
-			config.Logger.Printf("Request: %s %s", req.Method, req.URL)
-			return nil
-		})
-		restyClient.OnAfterResponse(func(c *resty.Client, resp *resty.Response) error {
-			config.Logger.Printf("Response: %d %s", resp.StatusCode(), string(resp.Body()))
-			return nil
-		})
+	// 创建标准 HTTP 客户端
+	httpClient := &http.Client{
+		Timeout: config.Timeout,
 	}
 
 	client := &Client{
-		config:      config,
-		restyClient: restyClient,
+		config:     config,
+		httpClient: httpClient,
+		baseURL:    config.BaseURL,
 	}
 
 	return client
@@ -243,45 +214,71 @@ func NewClientWithApiKey(apiKey string, opts ...Option) *Client {
 
 // request 发送GET请求并解析响应为指定类型
 func request[T any](c *Client, ctx context.Context, path string, queryParams map[string]string, headers map[string]string) (*T, error) {
-	// 创建resty请求
-	restyReq := c.restyClient.R().SetContext(ctx)
-
-	// 设置查询参数
-	if queryParams != nil {
-		restyReq.SetQueryParams(queryParams)
+	// 构建完整URL
+	fullURL, err := buildURL(c.baseURL, path, queryParams)
+	if err != nil {
+		return nil, NewError(ReasonInvalidRequest, fmt.Sprintf("invalid URL: %v", err))
 	}
+
+	// 创建HTTP请求
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURL, nil)
+	if err != nil {
+		return nil, NewError(ReasonInvalidRequest, fmt.Sprintf("failed to create request: %v", err))
+	}
+
+	// 设置标准请求头
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", "yunlai-go-sdk/1.0.0")
+	req.Header.Set("Authorization", "Bearer "+c.config.ApiKey)
 
 	// 设置自定义请求头
-	if headers != nil {
-		restyReq.SetHeaders(headers)
+	for key, value := range headers {
+		req.Header.Set(key, value)
 	}
 
-	// 执行GET请求
-	resp, err := restyReq.Get(path)
+	// 日志记录 - 请求前
+	if c.config.Logger != nil {
+		c.config.Logger.Printf("Request: %s %s", req.Method, req.URL.String())
+	}
+
+	// 发送HTTP请求
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, NewError(ReasonNetworkError, fmt.Sprintf("network error: %v", err))
 	}
+	defer resp.Body.Close()
+
+	// 读取响应体
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, NewError(ReasonNetworkError, fmt.Sprintf("failed to read response: %v", err))
+	}
+
+	// 日志记录 - 响应后
+	if c.config.Logger != nil {
+		c.config.Logger.Printf("Response: %d %s", resp.StatusCode, string(body))
+	}
 
 	// 检查HTTP状态码
-	if resp.StatusCode() >= 400 {
+	if resp.StatusCode >= 400 {
 		// 尝试解析API错误响应
 		var apiErr Error
-		if err := json.Unmarshal(resp.Body(), &apiErr); err == nil && apiErr.Reason != "" {
+		if err := json.Unmarshal(body, &apiErr); err == nil && apiErr.Reason != "" {
 			// 成功解析API错误响应
 			return nil, &apiErr
 		}
 
 		// 无法解析错误响应，返回通用错误
 		return nil, NewErrorWithCode(
-			resp.StatusCode(),
+			resp.StatusCode,
 			ReasonAPIError,
-			fmt.Sprintf("API error: HTTP %d", resp.StatusCode()),
+			fmt.Sprintf("API error: HTTP %d", resp.StatusCode),
 		)
 	}
 
 	// 解析响应为指定类型
 	var result T
-	if err := json.Unmarshal(resp.Body(), &result); err != nil {
+	if err := json.Unmarshal(body, &result); err != nil {
 		return nil, NewError(
 			ReasonAPIError,
 			fmt.Sprintf("failed to unmarshal response: %v", err),
@@ -289,6 +286,29 @@ func request[T any](c *Client, ctx context.Context, path string, queryParams map
 	}
 
 	return &result, nil
+}
+
+// buildURL 构建完整的请求URL
+func buildURL(baseURL, path string, queryParams map[string]string) (string, error) {
+	// 解析基础URL
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return "", err
+	}
+
+	// 拼接路径
+	u.Path = path
+
+	// 添加查询参数
+	if len(queryParams) > 0 {
+		q := u.Query()
+		for key, value := range queryParams {
+			q.Set(key, value)
+		}
+		u.RawQuery = q.Encode()
+	}
+
+	return u.String(), nil
 }
 
 // buildQueryParams 构建查询参数map，自动过滤空值

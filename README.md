@@ -2,6 +2,17 @@
 
 云来开放平台官方 Go 语言 SDK。
 
+[![Go Version](https://img.shields.io/badge/go-%3E%3D1.20-blue.svg)](https://golang.org/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+## 特性
+
+✅ **零外部依赖** - 只使用 Go 标准库  
+✅ **类型安全** - 完整的类型定义和泛型支持  
+✅ **易于使用** - 简洁的 API 设计  
+✅ **错误处理** - 详细的错误信息和自定义错误类型  
+✅ **日志支持** - 可配置的日志记录功能  
+
 ## 安装
 
 ```bash
@@ -216,10 +227,18 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 client := yunlai.NewClientWithApiKey("your_api_key",
     yunlai.WithBaseURL("https://api.58st.cn"),    // 自定义 API 基础 URL
     yunlai.WithTimeout(30 * time.Second),         // 请求超时时间
-    yunlai.WithRetry(3),                          // 重试次数
     yunlai.WithLogger(logger),                    // 自定义日志器
 )
 ```
+
+### 可用配置选项
+
+| 选项 | 说明 | 默认值 |
+|------|------|--------|
+| `WithApiKey(string)` | API 密钥（必需） | - |
+| `WithBaseURL(string)` | API 基础 URL | `https://api.58st.cn` |
+| `WithTimeout(time.Duration)` | 请求超时时间 | `30s` |
+| `WithLogger(Logger)` | 自定义日志记录器 | `nil` |
 
 ## 错误处理
 

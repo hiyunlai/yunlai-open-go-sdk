@@ -53,7 +53,6 @@ func TestNewClientWithOptions(t *testing.T) {
 		WithApiKey("test_api_key"),
 		WithBaseURL("https://custom.api.com"),
 		WithTimeout(60*time.Second),
-		WithRetry(5),
 	)
 
 	if client.config.BaseURL != "https://custom.api.com" {
@@ -62,10 +61,6 @@ func TestNewClientWithOptions(t *testing.T) {
 
 	if client.config.Timeout != 60*time.Second {
 		t.Errorf("expected Timeout to be 60s, got %v", client.config.Timeout)
-	}
-
-	if client.config.Retry != 5 {
-		t.Errorf("expected Retry to be 5, got %d", client.config.Retry)
 	}
 }
 
