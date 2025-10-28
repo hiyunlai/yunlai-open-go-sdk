@@ -128,6 +128,88 @@ resultInfo, _ := client.GetDigitalResultInfo(ctx, "239", "24001")
 
 </details>
 
+## Callback - 彩果回调
+
+**重要说明：** Callback 接口不是开放平台提供给合作方调用的接口，而是**合作方需要实现的回调接口**，由开放平台主动调用来通知彩果信息。
+
+### 接口定义
+
+**接口路径：** `POST /v1/callback`
+
+**请求参数：** `CallbackRequest`
+
+| 参数名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| lotteryType | string | 是 | 彩种类型，见下方彩种类型说明 |
+| unionKey | string | 是 | 唯一键，不同彩种格式不同，见下方格式说明 |
+
+**响应参数：** `CallbackReply` (空对象)
+
+### 彩种类型
+
+| 值 | 说明 |
+|----|------|
+| 226 | 北京单场 |
+| 227 | 竞彩足球 |
+| 228 | 竞彩篮球 |
+| 171 | 6场半全场 |
+| 172 | 胜负游戏 |
+| 173 | 任选9场 |
+| 174 | 4场进球 |
+| 163 | 排列三 |
+| 164 | 排列五 |
+| 166 | 双色球 |
+| 167 | 福彩3D |
+| 168 | 七星彩 |
+| 185 | 快乐8 |
+| 186 | 七乐彩 |
+| 188 | 大乐透 |
+| 229 | 冠亚军 |
+| 230 | 冠军 |
+
+### unionKey 格式说明
+
+不同彩种的 `unionKey` 格式不同：
+
+- **北京单场格式：** `玩法:场次编码`
+  - 示例：`1:2510598`（胜平负玩法的2510598场次）
+- **竞彩足球/篮球格式：** `场次编码`
+  - 示例：`2510271001`
+- **传统足彩格式：** `期次`
+  - 示例：`25001`
+- **数字彩格式：** `期次`
+  - 示例：`25001`
+- **冠亚军格式：** `期次`
+  - 示例：`1118245`
+
+### 实现示例
+
+合作方需要实现该回调接口的服务端处理逻辑：
+
+```go
+// 示例：使用标准库实现 Callback 接口
+func handleCallback(w http.ResponseWriter, r *http.Request) {
+    var req yunlai.CallbackRequest
+    
+    // 解析请求参数
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+    
+    // 处理彩果通知
+    log.Printf("收到彩果通知: 彩种=%s, 唯一键=%s", 
+        req.LotteryType, req.UnionKey)
+    
+    // 根据 lotteryType 和 unionKey 查询彩果详情
+    // 然后进行业务处理...
+    
+    // 返回成功响应
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(yunlai.CallbackReply{})
+}
+```
+
 ## 配置选项
 
 ```go

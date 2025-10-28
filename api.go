@@ -1431,3 +1431,42 @@ type PrizeLevelInfo struct {
 	// 单注奖金
 	StakeAmount float64 `json:"stakeAmount"`
 }
+
+// ==================== Callback - 彩果回调 ====================
+// 注意：以下接口不是开放平台提供给合作方调用的接口，
+// 而是合作方需要实现的回调接口，由开放平台主动调用通知彩果信息。
+
+// CallbackRequest 彩果回调请求参数
+type CallbackRequest struct {
+	// 彩种类型
+	// 226 - 北京单场
+	// 227 - 竞彩足球
+	// 228 - 竞彩篮球
+	// 171 - 6场半全场
+	// 172 - 胜负游戏
+	// 173 - 任选9场
+	// 174 - 4场进球
+	// 163 - 排列三
+	// 164 - 排列五
+	// 166 - 双色球
+	// 167 - 福彩3D
+	// 168 - 七星彩
+	// 185 - 快乐8
+	// 186 - 七乐彩
+	// 188 - 大乐透
+	// 229 - 冠亚军
+	// 230 - 冠军
+	LotteryType LotteryType `json:"lotteryType"`
+
+	// 唯一键
+	// 不同彩种的格式如下：
+	// - 北京单场格式：玩法:场次编码
+	// - 竞彩足球篮球格式：场次编码
+	// - 传统足彩格式：期次
+	// - 数字彩格式：期次
+	// - 冠亚军格式：期次
+	UnionKey string `json:"unionKey"`
+}
+
+// CallbackReply 彩果回调响应数据
+type CallbackReply struct{}
