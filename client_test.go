@@ -89,7 +89,7 @@ func TestClientErrorHandling(t *testing.T) {
 		Data string `json:"data"`
 	}
 	ctx := context.Background()
-	_, err := request[TestResponse](client, ctx, "/api/test", nil)
+	_, err := request[TestResponse](client, ctx, "/api/test", nil, nil)
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}

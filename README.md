@@ -1,17 +1,6 @@
 # 云来开放平台 Go SDK
 
-云来开放平台官方 Go 语言 SDK，提供便捷的 API 调用接口。
-
-## 特性
-
-- ✅ 简洁的 API 设计
-- ✅ 泛型架构，类型安全
-- ✅ 模块化设计（Live、Match、Draw）
-- ✅ API Key 认证
-- ✅ 自动请求重试
-- ✅ 上下文支持
-- ✅ 完善的错误处理
-- ✅ 日志记录支持
+云来开放平台官方 Go 语言 SDK。
 
 ## 安装
 
@@ -21,201 +10,147 @@ go get github.com/hiyunlai/yunlai-open-sdk
 
 ## 快速开始
 
-### 方式一：使用便捷方法（推荐）
-
 ```go
 package main
 
 import (
     "context"
-    "fmt"
     "log"
-    
-    yunlai "github.com/hiyunlai/yunlai-open-sdk"
-)
-
-func main() {
-    // 创建客户端（只需提供 API Key）
-    client := yunlai.NewClientWithApiKey("your_api_key")
-    
-    // 调用 Live 模块接口
-    ctx := context.Background()
-    matchInfo, err := client.GetLiveMatchInfo(ctx, "12345678")
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    fmt.Printf("赛事: %s vs %s\n", 
-        matchInfo.HomeTeamInfo.CnName, 
-        matchInfo.AwayTeamInfo.CnName)
-}
-```
-
-### 方式二：使用配置选项
-
-```go
-client := yunlai.NewClient(
-    yunlai.WithApiKey("your_api_key"),
-    yunlai.WithTimeout(60 * time.Second),
-    yunlai.WithRetry(5),
-)
-```
-
-## 业务模块
-
-SDK 按照开放平台的业务领域划分为三大模块：
-
-### Live 模块 - 比分直播
-
-获取实时比赛数据、赛事信息、球队数据等。
-
-```go
-// 获取比分直播赛事信息
-matchInfo, err := client.GetLiveMatchInfo(ctx, matchID)
-```
-
-**数据模型**：
-- `LiveMatchInfo` - 赛事信息
-- `LiveInfo` - 比分直播信息
-- `TeamInfo` - 球队信息
-- `TournamentInfo` - 联赛信息
-- `LotteryMapping` - 彩票场次映射
-- 等...
-
-### Match 模块 - 竞彩投注（待实现）
-
-获取竞彩足球、竞彩篮球、北京单场等投注和赛果信息。
-
-### Draw 模块 - 开奖信息（待实现）
-
-获取数字彩、传统足彩等开奖历史和详情信息。
-
-## 配置选项
-
-```go
-client := yunlai.NewClientWithApiKey("your_api_key",
-    yunlai.WithBaseURL("https://api.58st.cn"),    // 自定义 API 基础 URL（可选）
-    yunlai.WithTimeout(30 * time.Second),         // 请求超时时间（可选，默认30秒）
-    yunlai.WithRetry(3),                          // 重试次数（可选，默认3次）
-    yunlai.WithLogger(logger),                    // 自定义日志器（可选）
-)
-```
-
-## 错误处理
-
-SDK 提供了统一的错误处理机制：
-
-```go
-matchInfo, err := client.GetLiveMatchInfo(ctx, matchID)
-if err != nil {
-    // 判断是否为 API 错误
-    if apiErr, ok := err.(*yunlai.Error); ok {
-        fmt.Printf("错误码: %d\n", apiErr.Code)
-        fmt.Printf("错误原因: %s\n", apiErr.Reason)
-        fmt.Printf("错误信息: %s\n", apiErr.Message)
-        // 错误元数据
-        fmt.Printf("元数据: %v\n", apiErr.Metadata)
-    } else {
-        // 其他错误（如网络错误）
-        log.Fatal(err)
-    }
-    return
-}
-```
-
-## 完整示例
-
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "log"
-    "time"
     
     yunlai "github.com/hiyunlai/yunlai-open-sdk"
 )
 
 func main() {
     // 创建客户端
-    client := yunlai.NewClientWithApiKey("your_api_key",
-        yunlai.WithTimeout(60*time.Second),
-    )
+    client := yunlai.NewClientWithApiKey("your_api_key")
     
-    // 创建上下文
+    // 调用接口
     ctx := context.Background()
-    
-    // 获取比分直播赛事信息
     matchInfo, err := client.GetLiveMatchInfo(ctx, "12345678")
     if err != nil {
-        if apiErr, ok := err.(*yunlai.Error); ok {
-            log.Printf("API错误: [%d:%s] %s", 
-                apiErr.Code, apiErr.Reason, apiErr.Message)
-        } else {
-            log.Fatal(err)
-        }
-        return
+        log.Fatal(err)
     }
     
-    // 输出赛事信息
-    fmt.Printf("赛事ID: %s\n", matchInfo.MatchID)
-    fmt.Printf("运动类型: %s\n", matchInfo.SportID)
-    
-    if matchInfo.LiveInfo != nil {
-        fmt.Printf("比赛状态: %s\n", matchInfo.LiveInfo.StatusName)
-    }
-    
-    if matchInfo.TournamentInfo != nil {
-        fmt.Printf("联赛: %s\n", matchInfo.TournamentInfo.CnName)
-    }
-    
-    if matchInfo.HomeTeamInfo != nil && matchInfo.AwayTeamInfo != nil {
-        fmt.Printf("对阵: %s vs %s\n", 
-            matchInfo.HomeTeamInfo.CnName,
-            matchInfo.AwayTeamInfo.CnName)
-    }
-    
-    // 比分信息
-    if matchInfo.LiveInfo != nil {
-        if matchInfo.LiveInfo.HomeTeamScore != nil {
-            fmt.Printf("主队比分: %s\n", matchInfo.LiveInfo.HomeTeamScore.Score)
-        }
-        if matchInfo.LiveInfo.AwayTeamScore != nil {
-            fmt.Printf("客队比分: %s\n", matchInfo.LiveInfo.AwayTeamScore.Score)
-        }
-    }
+    // 使用返回数据
+    log.Printf("赛事: %s vs %s", 
+        matchInfo.HomeTeamInfo.CnName,
+        matchInfo.AwayTeamInfo.CnName)
 }
 ```
 
-## 自定义日志
+## 业务模块
+
+SDK 按业务领域划分为三大模块：
+
+### Live - 比分直播
+
+获取实时比赛数据、赛事信息、球队数据等。
 
 ```go
-import "log"
+// 获取赛事信息
+matchInfo, _ := client.GetLiveMatchInfo(ctx, matchID)
 
-type MyLogger struct{}
+// 获取赛事列表
+matchList, _ := client.GetLiveMatchList(ctx, sportID, startTime, endTime, lotteryType)
 
-func (l *MyLogger) Printf(format string, v ...interface{}) {
-    log.Printf("[YUNLAI] "+format, v...)
-}
+// 获取赛事阵容
+lineup, _ := client.GetLiveMatchLineup(ctx, matchID)
+```
 
+<details>
+<summary>查看全部接口</summary>
+
+- `GetLiveMatchInfo` - 赛事信息
+- `GetLiveMatchList` - 赛事列表
+- `GetLiveMatchLotteryMapping` - 彩种赛事映射
+- `GetLiveMatchHistory` - 历史对阵
+- `GetLiveMatchLineup` - 赛事阵容
+- `GetLiveMatchNews` - 新闻情报
+- `GetLiveMatchIntelligenceNews` - 专属情报
+- `GetLiveMatchOdds` - 百家盘赔率
+- `GetLiveMatchPhaseAll` - 直播全数据
+- `GetLiveMatchPhaseEvent` - 事件直播
+- `GetLiveMatchPhaseText` - 文字直播
+- `GetLiveMatchScore` - 比分详情
+- `GetLiveMatchStatic` - 数据统计
+- `GetLiveMatchPlayerStatic` - 球员统计
+
+</details>
+
+### Match - 竞彩投注
+
+获取竞彩足球、竞彩篮球、北京单场等投注信息。
+
+```go
+// 获取竞彩足球投注列表
+betList, _ := client.GetMatchBetList(ctx, "227", "spf")
+
+// 获取传统足彩投注信息
+betInfo, _ := client.GetCtzcBetInfo(ctx, "229", "24001")
+```
+
+<details>
+<summary>查看全部接口</summary>
+
+- `GetMatchBetList` - 赛事投注列表（北单、竞足、竞篮）
+- `GetMatchBetInfo` - 赛事投注信息（北单、竞足、竞篮）
+- `GetCtzcBetList` - 传统足彩投注列表
+- `GetCtzcBetInfo` - 传统足彩投注信息
+- `GetDigitalBetList` - 数字彩投注列表
+- `GetDigitalBetInfo` - 数字彩投注信息
+- `GetGyjBetInfo` - 冠亚军投注信息
+
+</details>
+
+### Draw - 开奖信息
+
+获取数字彩、传统足彩等开奖历史和详情。
+
+```go
+// 获取竞彩开奖大厅
+drawList, _ := client.GetLotteryDrawHomeList(ctx)
+
+// 获取数字彩彩果详情
+resultInfo, _ := client.GetDigitalResultInfo(ctx, "239", "24001")
+```
+
+<details>
+<summary>查看全部接口</summary>
+
+- `GetLotteryDrawHomeList` - 竞彩开奖大厅
+- `GetDrawHistoryList` - 竞彩开奖历史列表
+- `GetDigitalResultInfo` - 数字彩彩果详情
+- `GetDigitalHomeResultList` - 数字彩列表
+- `GetDigitalResultList` - 数字彩历史列表
+- `GetCtzcResultInfo` - 传统足彩赛果详情
+- `GetCtzcHomeResultList` - 传统足彩列表
+- `GetCtzcResultList` - 传统足彩历史列表
+
+</details>
+
+## 配置选项
+
+```go
 client := yunlai.NewClientWithApiKey("your_api_key",
-    yunlai.WithLogger(&MyLogger{}),
+    yunlai.WithBaseURL("https://api.58st.cn"),    // 自定义 API 基础 URL
+    yunlai.WithTimeout(30 * time.Second),         // 请求超时时间
+    yunlai.WithRetry(3),                          // 重试次数
+    yunlai.WithLogger(logger),                    // 自定义日志器
 )
 ```
 
-## 开发
+## 错误处理
 
-### 运行测试
-
-```bash
-go test -v
-```
-
-### 编译
-
-```bash
-go build ./...
+```go
+matchInfo, err := client.GetLiveMatchInfo(ctx, matchID)
+if err != nil {
+    if apiErr, ok := err.(*yunlai.Error); ok {
+        log.Printf("API错误: [%d:%s] %s", 
+            apiErr.Code, apiErr.Reason, apiErr.Message)
+    } else {
+        log.Fatal(err)
+    }
+}
 ```
 
 ## 许可证
