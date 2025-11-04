@@ -10,8 +10,8 @@ import (
 // GetMatchBetList 获取赛事投注列表（北单、竞足、竞篮）
 func (c *Client) GetMatchBetList(ctx context.Context, lotteryType LotteryType, subType SubType) (*MatchBetList, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
-		"subType":     subType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
+		"subType":     fmt.Sprintf("%d", subType),
 	})
 	return request[MatchBetList](c, ctx, "/v1/match/bet-list", queryParams, nil)
 }
@@ -19,8 +19,8 @@ func (c *Client) GetMatchBetList(ctx context.Context, lotteryType LotteryType, s
 // GetMatchBetInfo 获取赛事投注信息（北单、竞足、竞篮）
 func (c *Client) GetMatchBetInfo(ctx context.Context, lotteryType LotteryType, subType SubType, matchCode string) (*MatchBetInfo, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
-		"subType":     subType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
+		"subType":     fmt.Sprintf("%d", subType),
 		"matchCode":   matchCode,
 	})
 	return request[MatchBetInfo](c, ctx, "/v1/match/bet-info", queryParams, nil)
@@ -29,7 +29,7 @@ func (c *Client) GetMatchBetInfo(ctx context.Context, lotteryType LotteryType, s
 // GetCtzcBetList 获取传统足彩投注列表
 func (c *Client) GetCtzcBetList(ctx context.Context, lotteryType LotteryType) (*CtzcBetList, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 	})
 	return request[CtzcBetList](c, ctx, "/v1/match/ctzc/bet-list", queryParams, nil)
 }
@@ -37,7 +37,7 @@ func (c *Client) GetCtzcBetList(ctx context.Context, lotteryType LotteryType) (*
 // GetCtzcBetInfo 获取传统足彩投注信息
 func (c *Client) GetCtzcBetInfo(ctx context.Context, lotteryType LotteryType, issue string) (*CtzcBetInfo, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"issue":       issue,
 	})
 	return request[CtzcBetInfo](c, ctx, "/v1/match/ctzc/bet-info", queryParams, nil)
@@ -46,7 +46,7 @@ func (c *Client) GetCtzcBetInfo(ctx context.Context, lotteryType LotteryType, is
 // GetDigitalBetList 获取数字彩投注列表
 func (c *Client) GetDigitalBetList(ctx context.Context, lotteryType LotteryType) (*DigitalBetList, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 	})
 	return request[DigitalBetList](c, ctx, "/v1/match/digital/bet-list", queryParams, nil)
 }
@@ -54,7 +54,7 @@ func (c *Client) GetDigitalBetList(ctx context.Context, lotteryType LotteryType)
 // GetDigitalBetInfo 获取数字彩投注信息
 func (c *Client) GetDigitalBetInfo(ctx context.Context, lotteryType LotteryType, issue string) (*DigitalBetInfo, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"issue":       issue,
 	})
 	return request[DigitalBetInfo](c, ctx, "/v1/match/digital/bet-info", queryParams, nil)
@@ -63,7 +63,7 @@ func (c *Client) GetDigitalBetInfo(ctx context.Context, lotteryType LotteryType,
 // GetGyjBetInfo 获取冠亚军投注信息
 func (c *Client) GetGyjBetInfo(ctx context.Context, lotteryType LotteryType, issue string) (*GyjBetInfo, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"issue":       issue,
 	})
 	return request[GyjBetInfo](c, ctx, "/v1/match/gyj/bet-info", queryParams, nil)
@@ -72,7 +72,7 @@ func (c *Client) GetGyjBetInfo(ctx context.Context, lotteryType LotteryType, iss
 // GetLiveMatchLotteryMapping 获取彩种赛事对应比分直播赛事
 func (c *Client) GetLiveMatchLotteryMapping(ctx context.Context, lotteryType LotteryType, matchCode string) (*LiveMatchLotteryMapping, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"matchCode":   matchCode,
 	})
 	return request[LiveMatchLotteryMapping](c, ctx, "/v1/live/match/lottery/mapping", queryParams, nil)
@@ -84,7 +84,7 @@ func (c *Client) GetLiveMatchList(ctx context.Context, sportId SportId, startTim
 		"sportId":      sportId,
 		"startTimeStr": startTimeStr,
 		"endTimeStr":   endTimeStr,
-		"lotteryType":  lotteryType,
+		"lotteryType":  fmt.Sprintf("%d", lotteryType),
 	})
 	return request[LiveMatchList](c, ctx, "/v1/live/match", queryParams, nil)
 }
@@ -169,7 +169,7 @@ func (c *Client) GetLotteryDrawHomeList(ctx context.Context) (*LotteryDrawHomeLi
 // GetDrawHistoryList 获取竞彩开奖历史列表
 func (c *Client) GetDrawHistoryList(ctx context.Context, lotteryType LotteryType, dateStr string) (*DrawHistoryList, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"dateStr":     dateStr,
 	})
 	return request[DrawHistoryList](c, ctx, "/v1/draw/history/list", queryParams, nil)
@@ -183,7 +183,7 @@ func (c *Client) GetCtzcHomeResultList(ctx context.Context) (*CtzcHomeResultList
 // GetCtzcResultList 获取传统足彩历史列表
 func (c *Client) GetCtzcResultList(ctx context.Context, lotteryType LotteryType, count string) (*CtzcResultList, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"count":       count,
 	})
 	return request[CtzcResultList](c, ctx, "/v1/draw/ctzc/history/list", queryParams, nil)
@@ -192,7 +192,7 @@ func (c *Client) GetCtzcResultList(ctx context.Context, lotteryType LotteryType,
 // GetCtzcResultInfo 获取传统足彩赛果详情
 func (c *Client) GetCtzcResultInfo(ctx context.Context, lotteryType LotteryType, issue string) (*CtzcResultInfo, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"issue":       issue,
 	})
 	return request[CtzcResultInfo](c, ctx, "/v1/draw/ctzc", queryParams, nil)
@@ -206,7 +206,7 @@ func (c *Client) GetDigitalHomeResultList(ctx context.Context) (*DigitalHomeResu
 // GetDigitalResultList 获取数字彩历史列表
 func (c *Client) GetDigitalResultList(ctx context.Context, lotteryType LotteryType, count string) (*DigitalResultList, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"count":       count,
 	})
 	return request[DigitalResultList](c, ctx, "/v1/draw/digital/history/list", queryParams, nil)
@@ -215,83 +215,11 @@ func (c *Client) GetDigitalResultList(ctx context.Context, lotteryType LotteryTy
 // GetDigitalResultInfo 获取数字彩彩果详情
 func (c *Client) GetDigitalResultInfo(ctx context.Context, lotteryType LotteryType, issue string) (*DigitalResultInfo, error) {
 	queryParams := buildQueryParams(map[string]string{
-		"lotteryType": lotteryType,
+		"lotteryType": fmt.Sprintf("%d", lotteryType),
 		"issue":       issue,
 	})
 	return request[DigitalResultInfo](c, ctx, "/v1/draw/digital", queryParams, nil)
 }
-
-// ==================== 基础常量 ====================
-
-// LotteryType 彩种类型
-type LotteryType = string
-
-const (
-	// 竞技彩
-	LotteryTypeBjdc LotteryType = "226" // 北京单场
-	LotteryTypeJczq LotteryType = "227" // 竞彩足球
-	LotteryTypeJclq LotteryType = "228" // 竞彩篮球
-
-	// 传统足彩
-	LotteryTypeBqc LotteryType = "171" // 6场半全场
-	LotteryTypeSfc LotteryType = "172" // 胜负游戏
-	LotteryTypeRxj LotteryType = "173" // 任选9场
-	LotteryTypeZjq LotteryType = "174" // 4场进球
-
-	// 数字彩
-	LotteryTypePls  LotteryType = "163" // 排列三
-	LotteryTypePlw  LotteryType = "164" // 排列五
-	LotteryTypeSsq  LotteryType = "166" // 双色球
-	LotteryTypeFc3d LotteryType = "167" // 福彩3D
-	LotteryTypeQxc  LotteryType = "168" // 七星彩
-	LotteryTypeKl8  LotteryType = "185" // 快乐8
-	LotteryTypeQlc  LotteryType = "186" // 七乐彩
-	LotteryTypeDlt  LotteryType = "188" // 大乐透
-
-	// 冠亚军
-	LotteryTypeGyj LotteryType = "229" // 冠亚军
-	LotteryTypeGj  LotteryType = "230" // 冠军
-)
-
-// SubType 子玩法类型
-type SubType = string
-
-// 北京单场子玩法
-const (
-	SubTypeBjdcSpf  SubType = "1" // 胜平负
-	SubTypeBjdcZjq  SubType = "2" // 总进球数
-	SubTypeBjdcSxds SubType = "3" // 上下单双
-	SubTypeBjdcDcbf SubType = "4" // 单场比分
-	SubTypeBjdcBqc  SubType = "5" // 半全场
-	SubTypeBjdcSfgg SubType = "7" // 胜负过关
-)
-
-// 竞彩足球子玩法
-const (
-	SubTypeJczqRqspf SubType = "1" // 让球胜平负
-	SubTypeJczqZjq   SubType = "2" // 总进球
-	SubTypeJczqBf    SubType = "3" // 比分
-	SubTypeJczqBqc   SubType = "4" // 半全场
-	SubTypeJczqHhgg  SubType = "5" // 混合过关
-	SubTypeJczqSpf   SubType = "6" // 胜平负
-)
-
-// 竞彩篮球子玩法
-const (
-	SubTypeJclqSf   SubType = "1" // 胜负
-	SubTypeJclqRfsf SubType = "2" // 让分胜负
-	SubTypeJclqSfc  SubType = "3" // 胜分差
-	SubTypeJclqDxf  SubType = "4" // 大小分
-	SubTypeJclqHhgg SubType = "5" // 混合过关
-)
-
-// 运动类型
-type SportId = string
-
-const (
-	SportIdFootball   SportId = "1" // 足球
-	SportIdBasketball SportId = "2" // 篮球
-)
 
 // ==================== 数据模型 ====================
 
@@ -314,7 +242,7 @@ type BetInfo struct {
 	// 让球/让分数
 	Handicap float64 `json:"handicap"`
 	// 投注选项列表
-	Options []BetOption `json:"options"`
+	Options []*BetOption `json:"options"`
 }
 
 // MatchInfo 赛事信息
@@ -376,7 +304,7 @@ type MatchBetItem struct {
 // MatchBetList 赛事投注列表响应（北单、竞足、竞篮）
 type MatchBetList struct {
 	// 赛事投注列表
-	List []MatchBetItem `json:"list"`
+	List []*MatchBetItem `json:"list"`
 }
 
 // MatchBetInfo 赛事投注信息响应（北单、竞足、竞篮）
@@ -430,17 +358,17 @@ type CtzcBetInfo struct {
 	// 销售结束时间
 	SaleEndTimeStr string `json:"saleEndTimeStr"`
 	// 投注赛事列表
-	MatchList []CtzcMatchBetItem `json:"matchList"`
+	MatchList []*CtzcMatchBetItem `json:"matchList"`
 	// 开奖结果
 	DrawResult []string `json:"drawResult"`
 	// 奖等列表
-	PrizeLevelList []CtzcResultPrizeLevel `json:"prizeLevelList"`
+	PrizeLevelList []*CtzcResultPrizeLevel `json:"prizeLevelList"`
 }
 
 // CtzcBetList 传统足彩投注列表响应
 type CtzcBetList struct {
 	// 传统足彩在售期次列表
-	List []CtzcBetInfo `json:"list"`
+	List []*CtzcBetInfo `json:"list"`
 }
 
 // DigitalResultPrizeLevel 数字彩奖等
@@ -464,7 +392,7 @@ type DigitalBetInfo struct {
 	// 开奖结果
 	DrawResult []string `json:"drawResult"`
 	// 奖等列表
-	PrizeLevelList []DigitalResultPrizeLevel `json:"prizeLevelList"`
+	PrizeLevelList []*DigitalResultPrizeLevel `json:"prizeLevelList"`
 	// 是否已推送彩果
 	IsResultPushed bool `json:"isResultPushed"`
 }
@@ -472,7 +400,7 @@ type DigitalBetInfo struct {
 // DigitalBetList 数字彩投注列表响应
 type DigitalBetList struct {
 	// 数字彩在售期次列表
-	List []DigitalBetInfo `json:"list"`
+	List []*DigitalBetInfo `json:"list"`
 }
 
 // GyjBetOption 冠亚军投注可选项
@@ -500,7 +428,7 @@ type GyjBetInfo struct {
 	// 赛事中文名称
 	CNName string `json:"cnName"`
 	// 投注可选项列表
-	Options []GyjBetOption `json:"options"`
+	Options []*GyjBetOption `json:"options"`
 	// 彩果投注编号
 	ResultNum string `json:"resultNum"`
 	// 彩果赔率
@@ -1280,13 +1208,13 @@ type LiveMatchPlayerStatic struct {
 // LotteryDrawHomeList 竞彩开奖大厅响应
 type LotteryDrawHomeList struct {
 	// 竞彩开奖大厅列表信息
-	List []LotteryDrawHomeInfo `json:"list"`
+	List []*LotteryDrawHomeInfo `json:"list"`
 }
 
 // DrawHistoryList 竞彩开奖历史列表响应
 type DrawHistoryList struct {
 	// 竞彩足球历史开奖结果列表
-	List []DrawInfo `json:"list"`
+	List []*DrawInfo `json:"list"`
 }
 
 // DigitalResultInfo 数字彩彩果详情响应
@@ -1306,19 +1234,19 @@ type DigitalResultInfo struct {
 	// 奖池
 	PoolMoney float64 `json:"poolMoney"`
 	// 奖项级别列表,详情接口才返回
-	PrizeLevelList []PrizeLevelInfo `json:"prizeLevelList"`
+	PrizeLevelList []*PrizeLevelInfo `json:"prizeLevelList"`
 }
 
 // DigitalHomeResultList 数字彩列表响应
 type DigitalHomeResultList struct {
 	// 数字彩各彩种最近开奖结果列表
-	List []DigitalResultInfo `json:"list"`
+	List []*DigitalResultInfo `json:"list"`
 }
 
 // DigitalResultList 数字彩历史列表响应
 type DigitalResultList struct {
 	// 数字彩开奖结果列表
-	List []DigitalResultInfo `json:"list"`
+	List []*DigitalResultInfo `json:"list"`
 }
 
 // CtzcResultInfo 传统足彩赛果详情响应
@@ -1344,19 +1272,19 @@ type CtzcResultInfo struct {
 	// 奖池
 	PoolMoney float64 `json:"poolMoney"`
 	// 奖项级别列表
-	PrizeLevelList []PrizeLevelInfo `json:"prizeLevelList"`
+	PrizeLevelList []*PrizeLevelInfo `json:"prizeLevelList"`
 }
 
 // CtzcHomeResultList 传统足彩列表响应
 type CtzcHomeResultList struct {
 	// 传统足彩各彩种最近开奖结果列表
-	List []CtzcResultInfo `json:"list"`
+	List []*CtzcResultInfo `json:"list"`
 }
 
 // CtzcResultList 传统足彩历史列表响应
 type CtzcResultList struct {
 	// 传统足彩开奖结果列表
-	List []CtzcResultInfo `json:"list"`
+	List []*CtzcResultInfo `json:"list"`
 }
 
 // LotteryDrawHomeInfo 竞彩开奖大厅信息
@@ -1396,7 +1324,7 @@ type DrawInfo struct {
 	// 客队比分（无效场次时为空）
 	AwayTeamScore *MatchScore `json:"awayTeamScore,omitempty"`
 	// 玩法开奖信息列表
-	GameDrawList []GameDrawInfo `json:"gameDrawList"`
+	GameDrawList []*GameDrawInfo `json:"gameDrawList"`
 }
 
 // GameDrawInfo 玩法开奖信息
