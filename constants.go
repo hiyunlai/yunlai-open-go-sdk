@@ -736,6 +736,16 @@ var SportIdEnMapping = map[SportId]string{
 	SportIdWarCraft3:     "Warcraft 3",
 }
 
+// 状态码
+type Status = string
+
+const (
+	StatueNotStarted Status = "1" // 未开始
+	StatusInProgress Status = "2" // 进行中
+	StatusFinished   Status = "3" // 已结束
+	StatusCanceled   Status = "4" // 已取消
+)
+
 // StatusCode 子状态码
 type StatusCode = string
 

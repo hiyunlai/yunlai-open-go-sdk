@@ -254,9 +254,9 @@ type MatchInfo struct {
 	// 比赛时间
 	MatchTimeStr string `json:"matchTimeStr"`
 	// 状态
-	Status string `json:"status"`
+	Status Status `json:"status"`
 	// 状态码
-	StatusCode string `json:"statusCode"`
+	StatusCode StatusCode `json:"statusCode"`
 	// 状态名
 	StatusName string `json:"statusName"`
 	// 主队比分
@@ -464,9 +464,9 @@ type LiveMatchInfo struct {
 // LiveInfo 比分直播信息
 type LiveInfo struct {
 	// 状态 1-未开始 2-进行中 3-已结束 4-已取消
-	Status string `json:"status"`
+	Status Status `json:"status"`
 	// 状态码
-	StatusCode string `json:"statusCode"`
+	StatusCode StatusCode `json:"statusCode"`
 	// 状态名
 	StatusName string `json:"statusName"`
 	// 比赛时间
@@ -878,7 +878,7 @@ type MatchPhaseAllItem struct {
 	// 所属球队 0-公共 1-主队 2-客队
 	Team string `json:"team"`
 	// 比赛状态码
-	StatusCode string `json:"statusCode"`
+	StatusCode StatusCode `json:"statusCode"`
 	// 比赛状态名称
 	StatusName string `json:"statusName"`
 	// 事件类型ID
