@@ -9,7 +9,7 @@ import (
 
 // getTestClient 获取测试客户端（所有测试文件共用）
 func getTestClient() *Client {
-	return NewClientWithApiKey("your_api_key")
+	return NewClientWithApiKey("hIOg6sxoBqNb78TSCyzQeVcuDHlGkYW4")
 }
 
 // ==================== Match 测试 ====================

@@ -236,7 +236,7 @@ type BetOption struct {
 // BetInfo 投注信息
 type BetInfo struct {
 	// 子玩法
-	SubType SubType `json:"subType"`
+	SubType string `json:"subType"`
 	// 支持过关方式: 0-仅单关, 1-仅过关, 2-单关和过关, 3-未开售
 	SupportType string `json:"supportType"`
 	// 让球/让分数
@@ -268,7 +268,7 @@ type MatchInfo struct {
 // LotteryInfo 彩种信息
 type LotteryInfo struct {
 	// 彩种类型
-	LotteryType LotteryType `json:"lotteryType"`
+	LotteryType string `json:"lotteryType"`
 	// 场次编码
 	MatchCode string `json:"matchCode"`
 	// 期次
@@ -1220,7 +1220,7 @@ type DrawHistoryList struct {
 // DigitalResultInfo 数字彩彩果详情响应
 type DigitalResultInfo struct {
 	// 彩种类型
-	LotteryType LotteryType `json:"lotteryType"`
+	LotteryType string `json:"lotteryType"`
 	// 期次
 	Issue string `json:"issue"`
 	// 开奖号码
@@ -1256,7 +1256,7 @@ type CtzcResultInfo struct {
 	// 172 - 胜负游戏
 	// 173 - 任选9场
 	// 174 - 4场进球
-	LotteryType LotteryType `json:"lotteryType"`
+	LotteryType string `json:"lotteryType"`
 	// 期次
 	Issue string `json:"issue"`
 	// 开奖结果
@@ -1290,7 +1290,7 @@ type CtzcResultList struct {
 // LotteryDrawHomeInfo 竞彩开奖大厅信息
 type LotteryDrawHomeInfo struct {
 	// 彩种类型
-	LotteryType LotteryType `json:"lotteryType"`
+	LotteryType string `json:"lotteryType"`
 	// 可选场数
 	OptionCount string `json:"optionCount"`
 	// 最新开奖信息
@@ -1341,7 +1341,7 @@ type GameDrawInfo struct {
 	// 2 - 让分胜负
 	// 3 - 胜分差
 	// 4 - 大小分
-	SubType SubType `json:"subType"`
+	SubType string `json:"subType"`
 	// 让球/让分数
 	Handicap float64 `json:"handicap"`
 	// 投注码
@@ -1384,7 +1384,7 @@ type CallbackRequest struct {
 	// 188 - 大乐透
 	// 229 - 冠亚军
 	// 230 - 冠军
-	LotteryType LotteryType `json:"lotteryType"`
+	LotteryType string `json:"lotteryType"`
 
 	// 唯一键
 	// 不同彩种的格式如下：
