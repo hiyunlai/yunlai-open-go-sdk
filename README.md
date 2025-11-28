@@ -51,7 +51,7 @@ func main() {
 
 ## 业务模块
 
-SDK 按业务领域划分为三大模块：
+SDK 按业务领域划分为四大模块：
 
 ### Match - 竞彩投注
 
@@ -136,6 +136,22 @@ resultInfo, _ := client.GetDigitalResultInfo(ctx, "188", "25001")
 - `GetCtzcResultInfo` - 传统足彩赛果详情
 - `GetCtzcHomeResultList` - 传统足彩列表
 - `GetCtzcResultList` - 传统足彩历史列表
+
+</details>
+
+### Order - 投注方案
+
+获取分享的投注方案信息。
+
+```go
+// 获取分享的投注方案
+order, _ := client.GetShareBetOrder(ctx, "share_code")
+```
+
+<details>
+<summary>查看全部接口</summary>
+
+- `GetShareBetOrder` - 获取分享的投注方案
 
 </details>
 

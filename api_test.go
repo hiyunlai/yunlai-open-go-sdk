@@ -452,3 +452,20 @@ func TestGetDigitalResultInfo(t *testing.T) {
 	resultJSON, _ := json.MarshalIndent(result, "", "  ")
 	fmt.Printf("GetDigitalResultInfo Response:\n%s\n\n", resultJSON)
 }
+
+// ==================== Order 测试 ====================
+
+// TestGetShareBetOrder 测试获取分享的投注方案
+func TestGetShareBetOrder(t *testing.T) {
+	client := getTestClient()
+	ctx := context.Background()
+
+	result, err := client.GetShareBetOrder(ctx, "test_share_code")
+	if err != nil {
+		t.Logf("Error: %v", err)
+		return
+	}
+
+	resultJSON, _ := json.MarshalIndent(result, "", "  ")
+	fmt.Printf("GetShareBetOrder Response:\n%s\n\n", resultJSON)
+}

@@ -221,6 +221,12 @@ func (c *Client) GetDigitalResultInfo(ctx context.Context, lotteryType LotteryTy
 	return request[DigitalResultInfo](c, ctx, "/v1/draw/digital", queryParams, nil)
 }
 
+// GetShareBetOrder 获取分享的投注方案
+func (c *Client) GetShareBetOrder(ctx context.Context, code string) (*ShareBetOrder, error) {
+	path := fmt.Sprintf("/v1/order/share/%s", code)
+	return request[ShareBetOrder](c, ctx, path, nil, nil)
+}
+
 // ==================== 数据模型 ====================
 
 // BetOption 投注选项
@@ -1358,6 +1364,30 @@ type PrizeLevelInfo struct {
 	StakeCount string `json:"stakeCount"`
 	// 单注奖金
 	StakeAmount float64 `json:"stakeAmount"`
+}
+
+// ShareBetOrder 分享的投注方案
+type ShareBetOrder struct {
+	// 彩种类型
+	LotteryType string `json:"lotteryType"`
+	// 子玩法
+	SubType string `json:"subType"`
+	// 期次
+	Issue string `json:"issue"`
+	// 倍数
+	BetMulti string `json:"betMulti"`
+	// 是否追加
+	IsAdded bool `json:"isAdded"`
+	// 过关方式
+	MxnType string `json:"mxnType"`
+	// 投注码
+	BetCode string `json:"betCode"`
+	// 奖金优化类型: 0-未优化, 1-平均优化, 2-博热优化, 3-博冷优化
+	OptimizeType string `json:"optimizeType"`
+	// 奖金优化限额
+	OptimizeLimit float64 `json:"optimizeLimit"`
+	// 是否要求上传实体票
+	IsRequireSample bool `json:"isRequireSample"`
 }
 
 // ==================== Callback - 彩果回调 ====================
